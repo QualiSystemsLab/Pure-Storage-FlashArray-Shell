@@ -9,7 +9,6 @@
         <Attributes>
             <Attribute Name="User" Value="" />
             <Attribute Name="Password" Value="" />
-            <Attribute Name="connection_key" Value="" />
         </Attributes>
     </ResourceTemplate>    
 </ResourceTemplates>
