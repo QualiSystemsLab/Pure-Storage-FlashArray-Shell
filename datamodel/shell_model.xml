@@ -18,6 +18,30 @@
                 <AttachedAttribute Name="replication_address" IsOverridable="true" IsLocal="true">
                   <AllowedValues />
                 </AttachedAttribute>
+                <AttachedAttribute Name="vir0_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="vir1_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="ct0-eth0_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="ct0-eth1_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="ct1-eth0_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="ct1-eth1_address" IsOverridable="true" IsLocal="true">
+                  <AllowedValues />
+                </AttachedAttribute>
+                <AttachedAttribute Name="primary_management_interface" IsOverridable="true" IsLocal="true">
+                  <AllowedValues>
+                          <AllowedValue>vir0</AllowedValue>
+                            <AllowedValue>vir1</AllowedValue>
+                    </AllowedValues>
+                </AttachedAttribute>
                 <AttachedAttribute Name="Password" IsOverridable="true" IsLocal="true">
                   <AllowedValues />
                 </AttachedAttribute>

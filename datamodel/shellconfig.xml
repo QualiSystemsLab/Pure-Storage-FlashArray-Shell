@@ -9,6 +9,7 @@
         <Attributes>
             <Attribute Name="User" Value="" />
             <Attribute Name="Password" Value="" />
+            <Attrobite Name="primary_management_interface" Value="vir1" />
         </Attributes>
     </ResourceTemplate>    
 </ResourceTemplates>

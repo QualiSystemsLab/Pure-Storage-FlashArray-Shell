@@ -26,6 +26,41 @@
         <Rule Name="Configuration" />
       </Rules>
     </AttributeInfo>
+      <AttributeInfo Name="vir0_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="vir1_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="ct0-eth0_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="ct0-eth1_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="ct1-eth0_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="ct1-eth1_address" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="primary_management_interface" Type="String" DefaultValue="" IsReadOnly="false">
+      <Rules>
+        <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
     <AttributeInfo Name="Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false"
        Description="The Enable password is required by some CLI protocols such as Telnet">
       <Rules>
