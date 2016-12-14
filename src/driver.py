@@ -119,11 +119,29 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :param ResourceCommandContext context:
         :return:
         """
-        return context.resource.attributes['connection_key']
+        return self._get_api_session(context)
+
+    def get_api_token(self, context):
+        array = self._get_storage_api_session(context)
+        return array._api_token
 
     def get_replication_address(self, context):
 
-        return context.resource.attributes['replication_address']
+        array = self._get_storage_api_session(context)
+
+        networks = array.list_network_interfaces()
+        replication_address = None
+
+        for network in networks:
+            if u'replication' in network['services']:
+                replication_address = str(network['address'])
+                break
+
+        if replication_address is None:
+            return 'N\A'
+
+        else:
+            return replication_address
 
     def get_inventory(self, context):
         pass
