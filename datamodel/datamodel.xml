@@ -260,6 +260,16 @@
 
                     </ParentModels>
            </ResourceModel>
+           <ResourceModel Name="Storage Network Port" Description="" SupportsConcurrentCommands="false">
+               <AttachedAttributes>
+
+               </AttachedAttributes>
+
+           <ParentModels>
+                        <ParentModelName>Generic Storage Controller</ParentModelName>
+
+                    </ParentModels>
+           </ResourceModel>
        </Models>
    </ResourceFamily>
    <ResourceFamily Name="Power Port" IsConnectable="true" IsLockedByDefault="true" Description="" IsSearchable="true">
