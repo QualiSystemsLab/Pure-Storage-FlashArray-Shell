@@ -4,14 +4,10 @@ import purestorage
 from cloudshell.api.cloudshell_api import CloudShellAPISession
 from cloudshell.shell.core.driver_context import AutoLoadAttribute, AutoLoadCommandContext, AutoLoadResource, \
     AutoLoadDetails
+from cloudshell.core.logger import qs_logger
 
 
 class PureflasharrayDriver (ResourceDriverInterface):
-
-    def _dumblog(self, message):
-
-        with open('c:\\temp\\flasharray.txt','a') as f:
-            f.write(message + '\n')
 
     def cleanup(self):
         """
@@ -33,7 +29,32 @@ class PureflasharrayDriver (ResourceDriverInterface):
         This is a good place to load and cache the driver configuration, initiate sessions etc.
         :param InitCommandContext context: the context the command runs on
         """
+        self.logger = None
         pass
+
+
+    def _log(self, context, message, level='info'):
+        """
+
+        :param ResourceCommandContext context:
+        :return:
+        """
+
+        if self.logger is None:
+            if hasattr(context.reservation):
+                self.logger = qs_logger.get_qs_logger(context.reservation.reservation_id, 'PureStorageFlashArray',
+                                                  context.resource.name)
+            else:
+                self.logger = qs_logger.get_qs_logger('Unreserved', 'PureStorageFlashArray', context.resource.name)
+
+        if level == 'info':
+            self.logger.info(message)
+        elif level == 'debug':
+            self.logger.debug(message)
+        elif level == 'error':
+            self.logger.error(message)
+        elif level == 'critical':
+            self.logger.critical(message)
 
     def _get_api_session(self, context):
         """
@@ -75,7 +96,18 @@ class PureflasharrayDriver (ResourceDriverInterface):
         return self.array
 
     def create_host_entry(self, context, protocol, host_name, initiator_list):
+        """
 
+        :param ResourceCommandContext context:
+        :param protocol:
+        :param host_name:
+        :param initiator_list:
+        :return:
+        """
+
+        self._log('Creating host entry. host_name: {0} | initiator_list: {1} | protocol {2}'.format(host_name,
+                                                                                                           initiator_list,
+                                                                                                           protocol))
         array = self._get_storage_api_session(context)
         if protocol.lower() == 'fc':
             array.create_host(host_name, wwnlist=initiator_list.split(','))
@@ -84,46 +116,65 @@ class PureflasharrayDriver (ResourceDriverInterface):
             array.create_host(host_name, iqnlist=initiator_list.split(','))
 
         else:
+            self._log('Invalid protocol name', 'error')
             raise ValueError('Invalid protocol name')
+        self.logger.info('Host entry creation: SUCCESS')
 
     def create_host_group(self, context, group_name, host_list):
-
+        self._log('Creating host group. name: {0} | host_list: {1}'.format(group_name, host_list))
         array = self._get_storage_api_session(context)
 
         array.create_hgroup(group_name, hostlist=host_list.split(','))
+        self._log('Create host group SUCCESS')
 
     def create_volume(self, context, vol_name, size):
-
+        self._log('Creating volume. name: {0} | size: {1}'.format(vol_name, size))
         array = self._get_storage_api_session(context)
         array.create_volume(vol_name, size)
-
+        self._log('Create volume SUCCESS')
     def connect_volume_to_host_group(self, context, host_group, vol_name):
+        self._log('Connect volume to host group. host group: {0} | volumne: {1}'.format(host_group, vol_name))
         array = self._get_storage_api_session(context)
         array.connect_hgroup(host_group, vol_name)
+        self._log('Connect volumne to host gorup SUCCESS')
 
     def copy_volume(self, context, source, destination):
+        self._log('Copy Volume. source: {0} | destination: {1}'.format(source, destination))
         array = self._get_storage_api_session(context)
         array.copy_volume(source, destination)
+        self._log('Copy Volume SUCCESS')
 
     def delete_host_group(self, context, group_name):
+        self._log('delete host group. name: {0}'.format(group_name))
         array = self._get_storage_api_session(context)
         array.delete_hgroup(group_name)
+        self._log('delete host group SUCCESS')
 
     def delete_host(self, context, host_name):
+        self._log('delete host. name: {0}'.format(host_name))
         array = self._get_storage_api_session(context)
         array.delete_host(host_name)
+        self._log('delete host SUCCESS')
 
     def delete_volume(self, context, vol_name):
+        self._log('delete volume. name: {0}'.format(vol_name))
         array = self._get_storage_api_session(context)
         array.destroy_volume(vol_name)
+        self._log('delete volumne SUCCESS')
 
     def connect_array(self, context, management_ip, replication_ip, connection_key):
+        self._log('connect replication array. mgmt IP: {0} | repl IP: {1} | Conn Key: {2}'.format(management_ip,
+                                                                                                  replication_ip,
+                                                                                                  connection_key))
         array = self._get_storage_api_session(context)
         array.connect_array(management_ip, connection_key, 'replication', replication_address=replication_ip)
+        self._log('connect replicaotin array SUCCESS')
 
     def disconnect_array(self, context, management_ip):
+        self._log('disconnect array. mgmt IP: {0}'.format(management_ip))
         array = self._get_storage_api_session(context)
         array.disconnect_array(management_ip)
+        self._log('disconnect array SUCCESS')
 
     def get_connection_key(self, context):
         """
@@ -131,8 +182,11 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :param ResourceCommandContext context:
         :return:
         """
+        self._log('get connection key')
         array = self._get_storage_api_session(context)
-        return array.get(connection_key=True)['connection_key']
+        key = array.get(connection_key=True)['connection_key']
+        return key
+        self._log('Connection Key value {0}'.format(key),'debug')
 
     def get_api_token(self, context):
         array = self._get_storage_api_session(context)
@@ -211,27 +265,26 @@ class PureflasharrayDriver (ResourceDriverInterface):
         resources = []
         attributes = []
 
-        self._dumblog('conkey: ' + self.get_connection_key(context))
-        self._dumblog('repadd: ' + self.get_replication_address(context))
+
         attributes.append(AutoLoadAttribute('', 'replication_address', self.get_replication_address(context)))
         attributes.append(AutoLoadAttribute('', 'connection_key', self.get_connection_key(context)))
 
         networks = self._get_newtork_interfaces(context)
-        self._dumblog('nets: ' + str(networks))
+
 
         controllers = self._get_controllers(context)
-        self._dumblog('conts: ' + str(controllers))
+
         ports = self._get_ports(context)
-        self._dumblog('ports: ' + str(ports))
+
         model = None
         for controller in controllers:
             resources.append(AutoLoadResource(model='Generic Storage Controller', name=controller['name'],
                                               relative_address=controller['name']))
             if model is None:
                 model = controller['model']
-        self._dumblog('added controllers')
+
         attributes.append(AutoLoadAttribute('', 'Model', model))
-        self._dumblog('added model')
+
         for network in networks:
             net_name = network['name']
             controller = net_name.split('.')[0]
@@ -242,7 +295,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
                 continue
             resources.append(AutoLoadResource(model='Storage Network Port', name=net_name,
                                               relative_address=controller.upper() + '/' + network['address']))
-        self._dumblog('added networks')
+
         for port in ports:
             if port['iqn'] is not None:
                 port_name = port['name']
@@ -256,5 +309,5 @@ class PureflasharrayDriver (ResourceDriverInterface):
                 resources.append(AutoLoadResource(model='FC Storage Port', name=port['name'],
                                                   relative_address=controller + '/' + port['name'].split('.')[1]))
                 attributes.append(AutoLoadAttribute(controller + '/' + port['name'].split('.')[1], 'wwn', port['wwn']))
-        self._dumblog('added ports')
+
         return AutoLoadDetails(resources, attributes)
