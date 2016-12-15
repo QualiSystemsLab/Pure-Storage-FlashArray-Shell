@@ -36,35 +36,25 @@
         <Rule Name="Configuration" />
       </Rules>
     </AttributeInfo>
-      <AttributeInfo Name="ct0-eth0_address" Type="String" DefaultValue="" IsReadOnly="false">
-      <Rules>
-        <Rule Name="Configuration" />
-      </Rules>
-    </AttributeInfo>
-      <AttributeInfo Name="ct0-eth1_address" Type="String" DefaultValue="" IsReadOnly="false">
-      <Rules>
-        <Rule Name="Configuration" />
-      </Rules>
-    </AttributeInfo>
-      <AttributeInfo Name="ct1-eth0_address" Type="String" DefaultValue="" IsReadOnly="false">
-      <Rules>
-        <Rule Name="Configuration" />
-      </Rules>
-    </AttributeInfo>
-      <AttributeInfo Name="ct1-eth1_address" Type="String" DefaultValue="" IsReadOnly="false">
-      <Rules>
-        <Rule Name="Configuration" />
-      </Rules>
-    </AttributeInfo>
-      <AttributeInfo Name="primary_management_interface" Type="String" DefaultValue="" IsReadOnly="false">
-      <Rules>
-        <Rule Name="Configuration" />
-      </Rules>
-    </AttributeInfo>
     <AttributeInfo Name="Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false"
        Description="The Enable password is required by some CLI protocols such as Telnet">
       <Rules>
         <Rule Name="Configuration" />
+      </Rules>
+    </AttributeInfo>
+      <AttributeInfo Name="iqn" Type="String" DefaultValue="" IsReadOnly="false"
+       Description="The Enable password is required by some CLI protocols such as Telnet">
+      <Rules>
+        <Rule Name="Configuration" />
+          <Rule Name="Setting"/>
+      </Rules>
+    </AttributeInfo>
+
+      <AttributeInfo Name="wwn" Type="String" DefaultValue="" IsReadOnly="false"
+       Description="The Enable password is required by some CLI protocols such as Telnet">
+      <Rules>
+        <Rule Name="Configuration" />
+          <Rule Name="Setting"/>
       </Rules>
     </AttributeInfo>
     <AttributeInfo Name="Power Management" Type="Boolean" DefaultValue="False" IsReadOnly="false"
@@ -227,6 +217,51 @@
       </Models>
       <Categories />
     </ResourceFamily>
+      <ResourceFamily Name="Storage Controller" IsConnectable="false" IsLockedByDefault="false" Description="" IsSearchable="false" ResourceType="Resource">
+          <AttachedAttributes>
+          </AttachedAttributes>
+          <AttributeValues>
+          </AttributeValues>
+          <Models>
+              <ResourceModel Name="Generic Storage Controller" Description="" SupportsConcurrentCommands="false">
+                    <AttachedAttributes/>
+                <ParentModels>
+                        <ParentModelName>Pure Flash Array</ParentModelName>
+
+                    </ParentModels>
+              </ResourceModel>
+
+          </Models>
+      </ResourceFamily>
+   <ResourceFamily Name="Storage Port" IsConnectable="true" IsLockedByDefault="true" Description="" IsSearchable="false">
+       <AttachedAttributes></AttachedAttributes>
+       <AttributeValues></AttributeValues>
+       <Models>
+           <ResourceModel Name="iSCSI Storage Port" Description="" SupportsConcurrentCommands="false">
+               <AttachedAttributes>
+                   <AttachedAttribute Name="iqn" IsOverridable="true" IsLocal="true">
+                       <AllowedValues></AllowedValues>
+                   </AttachedAttribute>
+               </AttachedAttributes>
+               <ParentModels>
+                        <ParentModelName>Generic Storage Controller</ParentModelName>
+
+                    </ParentModels>
+           </ResourceModel>
+           <ResourceModel Name="FC Storage Port" Description="" SupportsConcurrentCommands="false">
+               <AttachedAttributes>
+                   <AttachedAttribute Name="wwn" IsOverridable="true" IsLocal="true">
+                       <AllowedValues></AllowedValues>
+                   </AttachedAttribute>
+               </AttachedAttributes>
+
+           <ParentModels>
+                        <ParentModelName>Generic Storage Controller</ParentModelName>
+
+                    </ParentModels>
+           </ResourceModel>
+       </Models>
+   </ResourceFamily>
    <ResourceFamily Name="Power Port" IsConnectable="true" IsLockedByDefault="true" Description="" IsSearchable="true">
         <AttachedAttributes />
 		<AttributeValues />

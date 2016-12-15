@@ -1,7 +1,8 @@
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
 from cloudshell.shell.core.context import InitCommandContext, ResourceCommandContext
 import purestorage
-from cloudshell.api.cloudshell_api import CloudShellAPISession
+from cloudshell.api.cloudshell_api import CloudShellAPISession, AutoLoad
+from cloudshell.shell.core.driver_context import AutoLoadAttribute, AutoLoadCommandContext
 
 
 class PureflasharrayDriver (ResourceDriverInterface):
@@ -34,9 +35,13 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :param ResourceCommandContext context:
         :return:
         """
-        return CloudShellAPISession(context.connectivity.server_address, domain=context.reservation.domain,
+        if hasattr(context, 'reservation'):
+            domain = context.reservation.domain
+        else:
+            domai = 'Global'
+        return CloudShellAPISession(context.connectivity.server_address, domain=domain,
                                     token_id=context.connectivity.admin_auth_token)
-        CloudShellAPISession.UpdateUsersLimitations()
+
 
     def _decrypt_password(self, context, password):
 
@@ -143,5 +148,12 @@ class PureflasharrayDriver (ResourceDriverInterface):
         else:
             return replication_address
 
-    def get_inventory(self, context):
-        pass
+
+    def _get_newtork_interfaces(self, context):
+        array = self._get_storage_api_session(context)
+
+        return array.list_network_interfaces()
+
+    
+
+
