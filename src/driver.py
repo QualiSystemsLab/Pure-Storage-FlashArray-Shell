@@ -114,7 +114,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
         elif wwn_list == '' and iqn_list != '':
             array.create_host(host_name, iqnlist=iqn_list.split(','))
         elif iqn_list == '' and wwn_list != '':
-            array.create_host(host_name, iqnlist=wwn_list.split(','))
+            array.create_host(host_name, wwnlist=wwn_list.split(','))
         else:
             self._log(context, 'Blank intiator lists', 'error')
             raise ValueError('Blank initiator lists')
