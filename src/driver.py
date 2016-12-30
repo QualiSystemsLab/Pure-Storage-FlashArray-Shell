@@ -41,7 +41,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
         """
 
         if self.logger is None:
-            if hasattr(context.reservation):
+            if hasattr(context, 'reservation'):
                 self.logger = qs_logger.get_qs_logger(context.reservation.reservation_id, 'PureStorageFlashArray',
                                                   context.resource.name)
             else:
@@ -105,7 +105,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :return:
         """
 
-        self._log('Creating host entry. host_name: {0} | initiator_list: {1} | protocol {2}'.format(host_name,
+        self._log(context, 'Creating host entry. host_name: {0} | initiator_list: {1} | protocol {2}'.format(host_name,
                                                                                                            initiator_list,
                                                                                                            protocol))
         array = self._get_storage_api_session(context)
@@ -116,65 +116,65 @@ class PureflasharrayDriver (ResourceDriverInterface):
             array.create_host(host_name, iqnlist=initiator_list.split(','))
 
         else:
-            self._log('Invalid protocol name', 'error')
+            self._log(context, 'Invalid protocol name', 'error')
             raise ValueError('Invalid protocol name')
         self.logger.info('Host entry creation: SUCCESS')
 
     def create_host_group(self, context, group_name, host_list):
-        self._log('Creating host group. name: {0} | host_list: {1}'.format(group_name, host_list))
+        self._log(context, 'Creating host group. name: {0} | host_list: {1}'.format(group_name, host_list))
         array = self._get_storage_api_session(context)
 
         array.create_hgroup(group_name, hostlist=host_list.split(','))
-        self._log('Create host group SUCCESS')
+        self._log(context, 'Create host group SUCCESS')
 
     def create_volume(self, context, vol_name, size):
-        self._log('Creating volume. name: {0} | size: {1}'.format(vol_name, size))
+        self._log(context, 'Creating volume. name: {0} | size: {1}'.format(vol_name, size))
         array = self._get_storage_api_session(context)
         array.create_volume(vol_name, size)
-        self._log('Create volume SUCCESS')
+        self._log(context, 'Create volume SUCCESS')
     def connect_volume_to_host_group(self, context, host_group, vol_name):
-        self._log('Connect volume to host group. host group: {0} | volumne: {1}'.format(host_group, vol_name))
+        self._log(context, 'Connect volume to host group. host group: {0} | volumne: {1}'.format(host_group, vol_name))
         array = self._get_storage_api_session(context)
         array.connect_hgroup(host_group, vol_name)
-        self._log('Connect volumne to host gorup SUCCESS')
+        self._log(context, 'Connect volumne to host gorup SUCCESS')
 
     def copy_volume(self, context, source, destination):
-        self._log('Copy Volume. source: {0} | destination: {1}'.format(source, destination))
+        self._log(context, 'Copy Volume. source: {0} | destination: {1}'.format(source, destination))
         array = self._get_storage_api_session(context)
         array.copy_volume(source, destination)
-        self._log('Copy Volume SUCCESS')
+        self._log(context, 'Copy Volume SUCCESS')
 
     def delete_host_group(self, context, group_name):
-        self._log('delete host group. name: {0}'.format(group_name))
+        self._log(context, 'delete host group. name: {0}'.format(group_name))
         array = self._get_storage_api_session(context)
         array.delete_hgroup(group_name)
-        self._log('delete host group SUCCESS')
+        self._log(context, 'delete host group SUCCESS')
 
     def delete_host(self, context, host_name):
-        self._log('delete host. name: {0}'.format(host_name))
+        self._log(context, 'delete host. name: {0}'.format(host_name))
         array = self._get_storage_api_session(context)
         array.delete_host(host_name)
-        self._log('delete host SUCCESS')
+        self._log(context, 'delete host SUCCESS')
 
     def delete_volume(self, context, vol_name):
-        self._log('delete volume. name: {0}'.format(vol_name))
+        self._log(context, 'delete volume. name: {0}'.format(vol_name))
         array = self._get_storage_api_session(context)
         array.destroy_volume(vol_name)
-        self._log('delete volumne SUCCESS')
+        self._log(context, 'delete volumne SUCCESS')
 
     def connect_array(self, context, management_ip, replication_ip, connection_key):
-        self._log('connect replication array. mgmt IP: {0} | repl IP: {1} | Conn Key: {2}'.format(management_ip,
+        self._log(context, 'connect replication array. mgmt IP: {0} | repl IP: {1} | Conn Key: {2}'.format(management_ip,
                                                                                                   replication_ip,
                                                                                                   connection_key))
         array = self._get_storage_api_session(context)
         array.connect_array(management_ip, connection_key, 'replication', replication_address=replication_ip)
-        self._log('connect replicaotin array SUCCESS')
+        self._log(context, 'connect replicaotin array SUCCESS')
 
     def disconnect_array(self, context, management_ip):
-        self._log('disconnect array. mgmt IP: {0}'.format(management_ip))
+        self._log(context, 'disconnect array. mgmt IP: {0}'.format(management_ip))
         array = self._get_storage_api_session(context)
         array.disconnect_array(management_ip)
-        self._log('disconnect array SUCCESS')
+        self._log(context, 'disconnect array SUCCESS')
 
     def get_connection_key(self, context):
         """
@@ -182,11 +182,11 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :param ResourceCommandContext context:
         :return:
         """
-        self._log('get connection key')
+        self._log(context, 'get connection key')
         array = self._get_storage_api_session(context)
         key = array.get(connection_key=True)['connection_key']
         return key
-        self._log('Connection Key value {0}'.format(key),'debug')
+        self._log(context, 'Connection Key value {0}'.format(key),'debug')
 
     def get_api_token(self, context):
         array = self._get_storage_api_session(context)
@@ -262,6 +262,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
            return AutoLoadDetails(sub_resources,attributes)
         '''
 
+        self._log(context, 'Begin autoload')
         resources = []
         attributes = []
 
@@ -270,14 +271,15 @@ class PureflasharrayDriver (ResourceDriverInterface):
         attributes.append(AutoLoadAttribute('', 'connection_key', self.get_connection_key(context)))
 
         networks = self._get_newtork_interfaces(context)
-
+        self._log(context, 'got networks')
 
         controllers = self._get_controllers(context)
-
+        self._log(context, 'got controllers')
         ports = self._get_ports(context)
 
         model = None
         for controller in controllers:
+            self._log(context, 'Processing ctrlt: ' + controller['name'] + ':' + controller['model'])
             resources.append(AutoLoadResource(model='Generic Storage Controller', name=controller['name'],
                                               relative_address=controller['name']))
             if model is None:
@@ -286,15 +288,18 @@ class PureflasharrayDriver (ResourceDriverInterface):
         attributes.append(AutoLoadAttribute('', 'Model', model))
 
         for network in networks:
+            self._log(context, 'Processing netwk: ' + network['name'] + ':' + str(network['address']))
             net_name = network['name']
             controller = net_name.split('.')[0]
             if 'vir0' in controller or 'vir1' in controller:
                 attributes.append(AutoLoadAttribute('',str(controller + '_address'), str(network['address'])))
                 continue
+            if 'vir' in controller:
+                continue
             if 'management' not in network['services']:
                 continue
             resources.append(AutoLoadResource(model='Storage Network Port', name=net_name,
-                                              relative_address=controller.upper() + '/' + network['address']))
+                                              relative_address=controller.upper() + '/' + str(network['address'])))
 
         for port in ports:
             if port['iqn'] is not None:
