@@ -95,7 +95,7 @@ class PureflasharrayDriver (ResourceDriverInterface):
 
         return self.array
 
-    def create_host_entry(self, context, protocol, host_name, initiator_list):
+    def create_host_entry(self, context, host_name, wwn_list='', iqn_list=''):
         """
 
         :param ResourceCommandContext context:
@@ -105,19 +105,19 @@ class PureflasharrayDriver (ResourceDriverInterface):
         :return:
         """
 
-        self._log(context, 'Creating host entry. host_name: {0} | initiator_list: {1} | protocol {2}'.format(host_name,
-                                                                                                           initiator_list,
-                                                                                                           protocol))
+        self._log(context, 'Creating host entry. host_name: {0} | wwn_list: {1} | iqn_list {2}'.format(host_name,
+                                                                                                           wwn_list,
+                                                                                                           iqn_list))
         array = self._get_storage_api_session(context)
-        if protocol.lower() == 'fc':
-            array.create_host(host_name, wwnlist=initiator_list.split(','))
-
-        elif protocol.lower() == 'iscsi':
-            array.create_host(host_name, iqnlist=initiator_list.split(','))
-
+        if wwn_list != '' and iqn_list != '':
+            array.create_host(host_name, wwnlist=wwn_list.split(','), iqnlist=iqn_list.split(','))
+        elif wwn_list == '' and iqn_list != '':
+            array.create_host(host_name, iqnlist=iqn_list.split(','))
+        elif iqn_list == '' and wwn_list != '':
+            array.create_host(host_name, iqnlist=wwn_list.split(','))
         else:
-            self._log(context, 'Invalid protocol name', 'error')
-            raise ValueError('Invalid protocol name')
+            self._log(context, 'Blank intiator lists', 'error')
+            raise ValueError('Blank initiator lists')
         self.logger.info('Host entry creation: SUCCESS')
 
     def create_host_group(self, context, group_name, host_list):
