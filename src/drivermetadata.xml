@@ -1,2 +1,12 @@
 <Driver Description="Describe the purpose of your CloudShell shell" MainClass="driver.PureflasharrayDriver" Name="PureflasharrayDriver" Version="1.0.0">
+    <Layout>
+  <Command Name="copy_volume" DisplayName="copy_volume" Tags="allow_unreserved" Description="copies a volume or snapshot" >
+            <Parameters>
+                <Parameter Name="source" Type="String" Mandatory = "True" DisplayName="source" DefaultValue=""
+                          />
+                <Parameter Name="destination" Type="String" Mandatory = "True" DisplayName="destination" DefaultValue=""
+                          />
+            </Parameters>
+        </Command>
+    </Layout>
  </Driver>

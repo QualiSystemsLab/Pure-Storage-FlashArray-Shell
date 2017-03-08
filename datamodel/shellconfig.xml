@@ -9,7 +9,8 @@
         <Attributes>
             <Attribute Name="User" Value="" />
             <Attribute Name="Password" Value="" />
+            <Attribute Name="vir1_address" Value="" />
         </Attributes>
-    </ResourceTemplate>    
+    </ResourceTemplate>
 </ResourceTemplates>
 </ShellsConfiguration>
